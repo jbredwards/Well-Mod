@@ -47,7 +47,7 @@ public final class RegistryHandler
     static void registerBlock(@Nonnull RegistryEvent.Register<Block> event) {
         final BlockWell block = new BlockWell(Material.ROCK);
         block.setRegistryName("well:well").setTranslationKey("well.well").setCreativeTab(CreativeTabs.DECORATIONS)
-                .setHardness(1f).setResistance(1.5f).setHarvestLevel("pickaxe", 0);
+                .setHardness(3f).setResistance(1.5f).setHarvestLevel("pickaxe", 0);
 
         event.getRegistry().register(block);
         GameRegistry.registerTileEntity(TileEntityWell.class, Objects.requireNonNull(block.getRegistryName()));

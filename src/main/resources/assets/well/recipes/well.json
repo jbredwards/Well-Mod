@@ -1,0 +1,18 @@
+{
+    "type":"minecraft:crafting_shaped",
+    "pattern":[
+        " R ",
+        "/B/",
+        " S "
+    ],
+    "key":{
+        "R":{"item":"minecraft:hardened_clay"},
+        "/":{"item":"minecraft:stick"},
+        "B":{"item":"minecraft:water_bucket"},
+        "S":{"item":"minecraft:stonebrick","data":0}
+    },
+    "result":{
+        "item":"well:well",
+        "count":1
+    }
+}

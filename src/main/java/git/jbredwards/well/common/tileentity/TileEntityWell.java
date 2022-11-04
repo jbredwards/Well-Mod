@@ -1,5 +1,6 @@
 package git.jbredwards.well.common.tileentity;
 
+import git.jbredwards.well.common.config.ConfigHandler;
 import git.jbredwards.well.common.init.RegistryHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +9,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -18,6 +21,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  *
@@ -27,25 +31,46 @@ import javax.annotation.Nullable;
 public class TileEntityWell extends TileEntity implements ITickable
 {
     @Nonnull
-    public final FluidTankSynced tank = new FluidTankSynced(this, 100000);
+    public final FluidTankSynced tank = new FluidTankSynced(this, ConfigHandler.tankCapacity);
     public long fillTick = 0;
+    public boolean initialized;
+    public int nearbyWells;
 
     @Override
     public void update() {
         if(hasWorld() && !world.isRemote && !world.provider.doesWaterVaporize() && fillTick <= world.getTotalWorldTime()) {
-            tank.fill(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), true);
+            tank.fill(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME / nearbyWells), true);
             initFillTick();
         }
     }
 
     @Override
     public void onLoad() {
-        if(fillTick == 0) initFillTick();
+        if(!initialized) {
+            initialized = true;
+            if(!world.isRemote) {
+                initFillTick();
+                countNearbyWells(te -> te.nearbyWells++);
+            }
+        }
+
         if(tank.updateLight(tank.getFluid()))
             world.markBlockRangeForRenderUpdate(pos, pos);
     }
 
     protected void initFillTick() { fillTick = world.getTotalWorldTime() + 25 + world.rand.nextInt(50); }
+    public void countNearbyWells(@Nonnull Consumer<TileEntityWell> updateScript) {
+        final Biome biome = world.getBiome(pos);
+        BlockPos.getAllInBox(pos.add(-15, -15, -15), pos.add(15, 15, 15)).forEach(otherPos -> {
+            if(world.getBiome(otherPos) == biome) {
+                final @Nullable TileEntity tile = world.getTileEntity(otherPos);
+                if(tile instanceof TileEntityWell) {
+                    if(tile != this) updateScript.accept((TileEntityWell)tile);
+                    updateScript.accept(this);
+                }
+            }
+        });
+    }
 
     @Nonnull
     @Override
@@ -66,9 +91,9 @@ public class TileEntityWell extends TileEntity implements ITickable
 
         //update renderer and light level if needed
         if(wasEmpty || wasFull || newFluid != null && newFluid.amount != oldFluid.amount) {
-            world.markBlockRangeForRenderUpdate(pos, pos);
             if(newFluid != null) tank.updateLight(newFluid);
             else tank.updateLight(oldFluid);
+            world.markBlockRangeForRenderUpdate(pos, pos);
         }
     }
 
@@ -77,6 +102,8 @@ public class TileEntityWell extends TileEntity implements ITickable
         super.readFromNBT(tag);
         tank.readFromNBT(tag);
         fillTick = tag.getLong("fillTick");
+        initialized = tag.getBoolean("initialized");
+        nearbyWells = tag.getInteger("nearbyWells");
     }
 
     @Nonnull
@@ -85,6 +112,8 @@ public class TileEntityWell extends TileEntity implements ITickable
         tag = super.writeToNBT(tag);
         tank.writeToNBT(tag);
         tag.setLong("fillTick", fillTick);
+        tag.setBoolean("initialized", initialized);
+        tag.setInteger("nearbyWells", nearbyWells);
         return tag;
     }
 
