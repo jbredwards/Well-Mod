@@ -7,29 +7,55 @@
     "variants":{
         "normal":[{}],
         "inventory":[{"model":"well:well"}],
-        "axis=x,is_bottom=false":[{
+        "axis=x,is_bottom=false,upside_down=false":[{
             "custom":{
                 "base":"well:well#roof_x",
                 "Solid":"well:well#roof_x"
             }
         }],
-        "axis=z,is_bottom=false":[{
+        "axis=z,is_bottom=false,upside_down=false":[{
             "custom":{
                 "base":"well:well#roof_z",
                 "Solid":"well:well#roof_z"
             }
         }],
-        "axis=x,is_bottom=true":[{
+        "axis=x,is_bottom=true,upside_down=false":[{
             "custom":{
                 "base":"well:well#base_x",
                 "Solid":"well:well#base_x",
                 "Translucent":"well:well#fluid"
             }
         }],
-        "axis=z,is_bottom=true":[{
+        "axis=z,is_bottom=true,upside_down=false":[{
             "custom":{
                 "base":"well:well#base_z",
                 "Solid":"well:well#base_z",
+                "Translucent":"well:well#fluid"
+            }
+        }],
+        "axis=x,is_bottom=false,upside_down=true":[{
+            "custom":{
+                "base":"well:well#roof_x_flipped",
+                "Solid":"well:well#roof_x_flipped"
+            }
+        }],
+        "axis=z,is_bottom=false,upside_down=true":[{
+            "custom":{
+                "base":"well:well#roof_z_flipped",
+                "Solid":"well:well#roof_z_flipped"
+            }
+        }],
+        "axis=x,is_bottom=true,upside_down=true":[{
+            "custom":{
+                "base":"well:well#base_x_flipped",
+                "Solid":"well:well#base_x_flipped",
+                "Translucent":"well:well#fluid"
+            }
+        }],
+        "axis=z,is_bottom=true,upside_down=true":[{
+            "custom":{
+                "base":"well:well#base_z_flipped",
+                "Solid":"well:well#base_z_flipped",
                 "Translucent":"well:well#fluid"
             }
         }],
@@ -37,6 +63,10 @@
         "base_z":{"model":"well:well_base","y":90},
         "roof_x":{"model":"well:well_roof"},
         "roof_z":{"model":"well:well_roof","y":90},
+        "base_x_flipped":{"model":"well:well_base","x":180},
+        "base_z_flipped":{"model":"well:well_base","x":180,"y":90},
+        "roof_x_flipped":{"model":"well:well_roof","x":180},
+        "roof_z_flipped":{"model":"well:well_roof","x":180,"y":90},
         "fluid":{"model":"well:fluid"}
     }
 }

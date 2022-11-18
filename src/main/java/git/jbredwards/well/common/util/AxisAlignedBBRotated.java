@@ -24,7 +24,7 @@ public class AxisAlignedBBRotated extends AxisAlignedBB
     //input rotations must be in degrees
     public AxisAlignedBBRotated(@Nonnull AxisAlignedBB parent, @Nonnull Vec3d rotation) {
         super(parent.minX, parent.minY, parent.minZ, parent.maxX, parent.maxY, parent.maxZ);
-        centerPos = new Vec3d(minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5, minZ + (maxZ - minZ) * 0.5);
+        centerPos = new Vec3d(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2, minZ + (maxZ - minZ) / 2);
         inputRotation = rotation;
         rotX = Math.toRadians(MathHelper.wrapDegrees(-rotation.x));
         rotY = Math.toRadians(MathHelper.wrapDegrees(-rotation.y));

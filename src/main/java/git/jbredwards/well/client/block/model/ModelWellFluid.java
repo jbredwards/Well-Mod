@@ -1,5 +1,6 @@
 package git.jbredwards.well.client.block.model;
 
+import git.jbredwards.well.common.block.BlockWell;
 import git.jbredwards.well.common.block.FluidUnlistedProperty;
 import git.jbredwards.well.common.config.ConfigHandler;
 import net.minecraft.block.state.IBlockState;
@@ -62,9 +63,12 @@ public enum ModelWellFluid implements IModel
             if(state instanceof IExtendedBlockState && side == EnumFacing.UP) {
                 final @Nullable FluidStack fluid = ((IExtendedBlockState)state).getValue(FluidUnlistedProperty.INSTANCE);
                 if(fluid != null) {
+                    final boolean isUpsideDown = state.getValue(BlockWell.UPSIDE_DOWN);
+                    final float height = ConfigHandler.getRenderedFluidHeight(fluid, isUpsideDown);
+
                     return Collections.singletonList(ItemTextureQuadConverter.genQuad(format,
-                            new TRSRTransformation(new Vector3f(0,ConfigHandler.getRenderedFluidHeight(fluid), 0),
-                                    null, null, new Quat4f(1, 0, 0, 1)),
+                            new TRSRTransformation(new Vector3f(0, height, isUpsideDown ? 1 : 0),
+                                    null, null, new Quat4f(1, 0, 0, isUpsideDown ? -1 : 1)),
                             3, 3, 13, 13, 0,
                             bakedTextureGetter.apply(fluid.getFluid().getStill(fluid)),
                             side, fluid.getFluid().getColor(fluid), 0

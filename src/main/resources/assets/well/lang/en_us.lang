@@ -1,1 +1,12 @@
+//Config
+config.well.tankCapacity=Fluid Tank Capacity
+config.well.tankCapacity.tooltip=How many millibuckets of a fluid can wells hold? Set to 0 to disable.
+config.well.onlyOnePerChunk=Limit to One Well per 16 blocks
+config.well.onlyOnePerChunk.tooltip=When set to true, all wells in the area will stop working while there's more than 1.
+config.well.playSound=Play Collect Sound
+config.well.playSound.tooltip=Play a bucket fill sound when wells passively collect fluid.
+//Block
 tile.well.well.name=Well
+//Misc
+warn.well.onePerChunk=§l§4Already one other right side up well within 16 blocks of this one!
+warn.well.onePerChunkFlipped=§l§4Already one other upside down well within 16 blocks of this one!
