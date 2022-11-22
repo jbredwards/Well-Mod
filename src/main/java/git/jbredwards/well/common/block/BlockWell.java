@@ -86,9 +86,9 @@ public class BlockWell extends Block implements ITileEntityProvider
 
     @Override
     public int getMetaFromState(@Nonnull IBlockState state) {
-        return (state.getValue(UPSIDE_DOWN) ? 2 : 0)
-                | state.getValue(AXIS).ordinal() << 1
-                | (state.getValue(IS_BOTTOM) ? 1 : 0);
+        return (state.getValue(IS_BOTTOM) ? 1 : 0)
+                | (state.getValue(UPSIDE_DOWN) ? 2 : 0)
+                | state.getValue(AXIS).ordinal() << 1;
     }
 
     @Override

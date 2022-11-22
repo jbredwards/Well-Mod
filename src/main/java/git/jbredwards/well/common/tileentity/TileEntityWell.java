@@ -13,8 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -35,6 +33,7 @@ public class TileEntityWell extends TileEntity implements ITickable
     public long fillTick = 0;
     public int nearbyWells = 1;
     public boolean initialized;
+    protected Biome biome;
 
     @Override
     public void update() {
@@ -65,23 +64,15 @@ public class TileEntityWell extends TileEntity implements ITickable
             world.markBlockRangeForRenderUpdate(pos, pos);
     }
 
-    //TODO add biome-based fluid config, for now only return water
     @Nullable
-    protected FluidStack getFluidToFill() {
-        return world.provider.doesWaterVaporize() ? null : new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME / nearbyWells);
-    }
-
-    //TODO allow config to specify fill delay based on biome
-    protected void initFillTick() {
-        fillTick = world.getTotalWorldTime() + 25 + world.rand.nextInt(50);
-    }
+    protected FluidStack getFluidToFill() { return ConfigHandler.getFillFluid(getBiome(), world, nearbyWells); }
+    protected void initFillTick() { fillTick = world.getTotalWorldTime() + ConfigHandler.getFillDelay(getBiome(), world.rand); }
 
     public void countNearbyWells(@Nonnull Consumer<TileEntityWell> updateScript) {
-        final Biome biome = world.getBiome(pos);
         BlockPos.getAllInBox(pos.add(-15, -15, -15), pos.add(15, 15, 15)).forEach(otherPos -> {
-            if(world.getBiome(otherPos) == biome) {
+            if(!otherPos.equals(pos) && world.getBiome(otherPos) == getBiome()) {
                 final @Nullable TileEntity tile = world.getTileEntity(otherPos);
-                if(tile != this && tile instanceof TileEntityWell && isUpsideDown(tile) == isUpsideDown())
+                if(tile instanceof TileEntityWell && isUpsideDown(tile) == isUpsideDown())
                     updateScript.accept((TileEntityWell)tile);
             }
         });
@@ -91,6 +82,15 @@ public class TileEntityWell extends TileEntity implements ITickable
     public static boolean isUpsideDown(@Nonnull TileEntity tile) {
         return tile instanceof TileEntityWell && ((TileEntityWell)tile).isUpsideDown();
     }
+
+    @Override
+    public void markDirty() {
+        if(hasWorld()) biome = world.getBiome(pos);
+        super.markDirty();
+    }
+
+    @Nonnull
+    public Biome getBiome() { return biome == null ? (biome = world.getBiome(pos)) : biome; }
 
     @Nonnull
     @Override
