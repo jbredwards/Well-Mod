@@ -1,10 +1,12 @@
 //Config
-config.well.tankCapacity=Fluid Tank Capacity
-config.well.tankCapacity.tooltip=How many millibuckets of a fluid can wells hold? Set to 0 to disable.
+config.well.data=Fluid Collection Data
+config.well.data.tooltip=Handle what fluids wells collect based on biome, and how much
 config.well.onlyOnePerChunk=Limit to One Well per 16 blocks
 config.well.onlyOnePerChunk.tooltip=When set to true, all wells in the area will stop working while there's more than 1.
 config.well.playSound=Play Collect Sound
 config.well.playSound.tooltip=Play a bucket fill sound when wells passively collect fluid.
+config.well.tankCapacity=Fluid Tank Capacity
+config.well.tankCapacity.tooltip=How many millibuckets of a fluid can wells hold? Set to 0 to disable.
 //Block
 tile.well.well.name=Well
 //Misc

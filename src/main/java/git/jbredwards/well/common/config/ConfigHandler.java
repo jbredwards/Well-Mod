@@ -1,11 +1,11 @@
 package git.jbredwards.well.common.config;
 
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.*;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -49,28 +49,106 @@ public final class ConfigHandler
 
     @Config.LangKey("config.well.data")
     @Nonnull public static String data = "{}";
-    @Nonnull static final Map<Biome, WellFluidData> wellData = new HashMap<>();
+    @Nonnull static final Map<Biome, WellFluidData> downWellData = new HashMap<>();
+    @Nonnull static final Map<Biome, WellFluidData> upWellData = new HashMap<>();
 
     public static void initData() {
         //reset defaults
-        WellFluidData.DEFAULT.fluid = new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
-        WellFluidData.DEFAULT.minToFill = 160;
-        WellFluidData.DEFAULT.maxToFill = 200;
-        wellData.clear();
+        WellFluidData.DOWN_DEFAULT.reset();
+        WellFluidData.UP_DEFAULT.reset();
+        downWellData.clear();
+        upWellData.clear();
 
         try {
             final NBTTagCompound nbt = JsonToNBT.getTagFromJson(data);
             //set default fluid
             if(nbt.hasKey("DefaultFluid", NBT.TAG_COMPOUND)) {
                 final FluidStack defaultFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("DefaultFluid"));
-                if(defaultFluid != null) WellFluidData.DEFAULT.fluid = defaultFluid;
+                if(defaultFluid != null) {
+                    WellFluidData.DOWN_DEFAULT.fluid = defaultFluid;
+                    WellFluidData.UP_DEFAULT.fluid = defaultFluid;
+                }
             }
             //set default min fill ticks
-            if(nbt.hasKey("DefaultMinTicks", NBT.TAG_INT))
-                WellFluidData.DEFAULT.minToFill = Math.max(0, nbt.getInteger("DefaultMinTicks"));
+            if(nbt.hasKey("DefaultMinTicks", NBT.TAG_INT)) {
+                WellFluidData.DOWN_DEFAULT.minToFill = Math.max(0, nbt.getInteger("DefaultMinTicks"));
+                WellFluidData.UP_DEFAULT.minToFill = Math.max(0, nbt.getInteger("DefaultMinTicks"));
+            }
             //set default max fill ticks
-            if(nbt.hasKey("DefaultMaxTicks", NBT.TAG_INT))
-                WellFluidData.DEFAULT.maxToFill = Math.max(0, nbt.getInteger("DefaultMaxTicks"));
+            if(nbt.hasKey("DefaultMaxTicks", NBT.TAG_INT)) {
+                WellFluidData.DOWN_DEFAULT.maxToFill = Math.max(0, nbt.getInteger("DefaultMaxTicks"));
+                WellFluidData.UP_DEFAULT.maxToFill = Math.max(0, nbt.getInteger("DefaultMaxTicks"));
+            }
+
+            //set default down fluid
+            if(nbt.hasKey("DefaultDownFluid", NBT.TAG_COMPOUND)) {
+                final FluidStack defaultFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("DefaultDownFluid"));
+                if(defaultFluid != null) WellFluidData.DOWN_DEFAULT.fluid = defaultFluid;
+            }
+            //set default down min fill ticks
+            if(nbt.hasKey("DefaultDownMinTicks", NBT.TAG_INT))
+                WellFluidData.DOWN_DEFAULT.minToFill = Math.max(0, nbt.getInteger("DefaultDownMinTicks"));
+            //set default down max fill ticks
+            if(nbt.hasKey("DefaultDownMaxTicks", NBT.TAG_INT))
+                WellFluidData.DOWN_DEFAULT.maxToFill = Math.max(0, nbt.getInteger("DefaultDownMaxTicks"));
+
+            //set default up fluid
+            if(nbt.hasKey("DefaultUpFluid", NBT.TAG_COMPOUND)) {
+                final FluidStack defaultFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("DefaultUpFluid"));
+                if(defaultFluid != null) WellFluidData.UP_DEFAULT.fluid = defaultFluid;
+            }
+            //set default up min fill ticks
+            if(nbt.hasKey("DefaultUpMinTicks", NBT.TAG_INT))
+                WellFluidData.UP_DEFAULT.minToFill = Math.max(0, nbt.getInteger("DefaultUpMinTicks"));
+            //set default up max fill ticks
+            if(nbt.hasKey("DefaultUpMaxTicks", NBT.TAG_INT))
+                WellFluidData.UP_DEFAULT.maxToFill = Math.max(0, nbt.getInteger("DefaultUpMaxTicks"));
+
+            //handle per-biome data
+            if(nbt.hasKey("Data", NBT.TAG_LIST)) {
+                final NBTTagList dataList = nbt.getTagList("Data", NBT.TAG_COMPOUND);
+                for(int i = 0; i < dataList.tagCount(); i++) {
+                    final NBTTagCompound data = dataList.getCompoundTagAt(i);
+                    if(data.hasKey("Fluid", NBT.TAG_COMPOUND)) {
+                        final FluidStack fluid = FluidStack.loadFluidStackFromNBT(data.getCompoundTag("Fluid"));
+                        final int minToFill = (fluid != null && data.hasKey("MinTicks", NBT.TAG_INT) ? Math.max(0, data.getInteger("MinTicks")) : 0);
+                        final int maxToFill = (fluid != null && data.hasKey("MaxTicks", NBT.TAG_INT) ? Math.max(0, data.getInteger("MaxTicks")) : 0);
+                        final WellFluidData wellData = new WellFluidData(fluid, minToFill, maxToFill);
+                        //handle biome tags
+                        data.getTagList("BiomeTags", NBT.TAG_STRING).forEach(biomeTagNbt -> {
+                            final BiomeDictionary.Type biomeTag = BiomeDictionary.Type.getType(((NBTTagString)biomeTagNbt).getString());
+                            for(Biome biome : BiomeDictionary.getBiomes(biomeTag)) {
+                                //remove existing data
+                                if(fluid == null || maxToFill < minToFill || maxToFill <= 0) {
+                                    downWellData.remove(biome);
+                                    upWellData.remove(biome);
+                                }
+                                //add new data
+                                else {
+                                    if(wellData.fluid.getFluid().isLighterThanAir()) upWellData.put(biome, wellData);
+                                    else downWellData.put(biome, wellData);
+                                }
+                            }
+                        });
+                        //handle biomes
+                        data.getTagList("Biomes", NBT.TAG_STRING).forEach(biomeNbt -> {
+                            final Biome biome = Biome.REGISTRY.getObject(new ResourceLocation(((NBTTagString)biomeNbt).getString()));
+                            if(biome != null) {
+                                //remove existing data
+                                if(fluid == null || maxToFill < minToFill || maxToFill <= 0) {
+                                    downWellData.remove(biome);
+                                    upWellData.remove(biome);
+                                }
+                                //add new data
+                                else {
+                                    if(wellData.fluid.getFluid().isLighterThanAir()) upWellData.put(biome, wellData);
+                                    else downWellData.put(biome, wellData);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
         }
 
         //malformed config
@@ -78,8 +156,11 @@ public final class ConfigHandler
     }
 
     @Nullable
-    public static FluidStack getFillFluid(@Nonnull Biome biome, @Nonnull World world, int nearbyWells) {
-        final WellFluidData data = wellData.getOrDefault(biome, WellFluidData.DEFAULT);
+    public static FluidStack getFillFluid(@Nonnull Biome biome, @Nonnull World world, boolean upsideDown, int nearbyWells) {
+        final WellFluidData data = upsideDown
+                ? upWellData.getOrDefault(biome, WellFluidData.UP_DEFAULT)
+                : downWellData.getOrDefault(biome, WellFluidData.DOWN_DEFAULT);
+
         if(data.fluid.amount <= 0 || world.provider.doesWaterVaporize() && data.fluid.getFluid().doesVaporize(data.fluid))
             return null;
 
@@ -88,8 +169,11 @@ public final class ConfigHandler
         return fluid;
     }
 
-    public static int getFillDelay(@Nonnull Biome biome, @Nonnull Random rand) {
-        final WellFluidData data = wellData.getOrDefault(biome, WellFluidData.DEFAULT);
+    public static int getFillDelay(@Nonnull Biome biome, @Nonnull Random rand, boolean upsideDown) {
+        final WellFluidData data = upsideDown
+                ? upWellData.getOrDefault(biome, WellFluidData.UP_DEFAULT)
+                : downWellData.getOrDefault(biome, WellFluidData.DOWN_DEFAULT);
+
         return MathHelper.getInt(rand, data.minToFill, data.maxToFill);
     }
 
@@ -103,18 +187,23 @@ public final class ConfigHandler
 
     static class WellFluidData
     {
-        @Nonnull
-        static final WellFluidData DEFAULT = new WellFluidData(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), 160, 200);
+        @Nonnull static final WellFluidData DOWN_DEFAULT = new WellFluidData(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), 160, 200);
+        @Nonnull static final WellFluidData UP_DEFAULT = new WellFluidData(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), 160, 200);
 
-        @Nonnull
         FluidStack fluid;
         int minToFill;
         int maxToFill;
 
-        WellFluidData(@Nonnull FluidStack fluidIn, int minIn, int maxIn) {
+        WellFluidData(@Nullable FluidStack fluidIn, int minIn, int maxIn) {
             fluid = fluidIn;
             minToFill = minIn;
             maxToFill = maxIn;
+        }
+
+        void reset() {
+            fluid = new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
+            minToFill = 160;
+            maxToFill = 200;
         }
     }
 }

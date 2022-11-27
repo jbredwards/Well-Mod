@@ -65,8 +65,13 @@ public class TileEntityWell extends TileEntity implements ITickable
     }
 
     @Nullable
-    protected FluidStack getFluidToFill() { return ConfigHandler.getFillFluid(getBiome(), world, nearbyWells); }
-    protected void initFillTick() { fillTick = world.getTotalWorldTime() + ConfigHandler.getFillDelay(getBiome(), world.rand); }
+    protected FluidStack getFluidToFill() {
+        return ConfigHandler.getFillFluid(getBiome(), world, isUpsideDown(), nearbyWells);
+    }
+
+    protected void initFillTick() {
+        fillTick = world.getTotalWorldTime() + ConfigHandler.getFillDelay(getBiome(), world.rand, isUpsideDown());
+    }
 
     public void countNearbyWells(@Nonnull Consumer<TileEntityWell> updateScript) {
         BlockPos.getAllInBox(pos.add(-15, -15, -15), pos.add(15, 15, 15)).forEach(otherPos -> {
