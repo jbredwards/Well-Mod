@@ -1,1 +1,14 @@
+//Config
+config.well.data=Datos de recolección de fluido
+config.well.data.tooltip=Controla qué tipo de y cuánto fluido se pueden obtener dependiente del bioma
+config.well.onlyOnePerChunk=Limitar a un solo pozo por cada 16 bloques
+config.well.onlyOnePerChunk.tooltip=Si el valor es "true", todos los pozos en el area dejarán de funcionar cuando haya más de uno.
+config.well.playSound=Reproducir sonido de recolección
+config.well.playSound.tooltip=Reproduce un sonido de cubo llenándose cuando los pozos recolectan fluido de manera pasiva
+config.well.tankCapacity=Capacidad de tanque de fluido
+config.well.tankCapacity.tooltip=Cuántos milicubos (mb) almacena un pozo. Dejar en 0 para desactivar.
+//Block
 tile.well.well.name=Pozo
+//Misc
+warn.well.onePerChunk=§l§4Ya existe un pozo apuntando hacia arriba 16 bloques alrededor de este!
+warn.well.onePerChunkFlipped=§l§4Ya existe un pozo apuntando hacia abajo 16 bloques alrededor de este!
