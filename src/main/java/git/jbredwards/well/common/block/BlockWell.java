@@ -1,6 +1,5 @@
 package git.jbredwards.well.common.block;
 
-import git.jbredwards.well.Main;
 import git.jbredwards.well.common.config.ConfigHandler;
 import git.jbredwards.well.common.tileentity.TileEntityWell;
 import net.minecraft.block.Block;
@@ -30,6 +29,7 @@ import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -37,6 +37,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -174,7 +175,9 @@ public class BlockWell extends Block implements ITileEntityProvider
                 if(fluid != null && fluid.getFluid().canBePlacedInWorld()) {
                     final float baseFluidLight = fluid.getFluid().getBlock().getDefaultState().getLightValue();
                     if(baseFluidLight > 0) {
-                        if(Main.proxy.isTranslucentActive()) return Math.max(state.getLightValue(), (int)baseFluidLight);
+                        if(FMLCommonHandler.instance().getSide().isClient() && canRenderFluid())
+                            return Math.max(state.getLightValue(), (int)baseFluidLight);
+
                         final int fluidLight = MathHelper.clamp((int)(baseFluidLight * fluid.amount / ConfigHandler.tankCapacity + 0.5), 1, 15);
                         return Math.max(state.getLightValue(), fluidLight);
                     }
@@ -188,7 +191,7 @@ public class BlockWell extends Block implements ITileEntityProvider
     @SideOnly(Side.CLIENT)
     @Override
     public int getPackedLightmapCoords(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
-        if(Main.proxy.isTranslucentActive()) {
+        if(canRenderFluid()) {
             final @Nullable TileEntity tile = source.getTileEntity(pos);
             if(tile instanceof TileEntityWell) {
                 final @Nullable FluidStack fluid = ((TileEntityWell)tile).tank.getFluid();
@@ -375,6 +378,8 @@ public class BlockWell extends Block implements ITileEntityProvider
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
         return layer == BlockRenderLayer.SOLID || state.getValue(IS_BOTTOM) && layer == BlockRenderLayer.TRANSLUCENT;
     }
+
+    public boolean canRenderFluid() { return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT; }
 
     @Nonnull
     @Override

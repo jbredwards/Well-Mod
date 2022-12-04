@@ -26,5 +26,6 @@ tile.well.well.name=Pozo
 tile.well.white_well.name=Pozo blanco
 tile.well.yellow_well.name=Pozo amarillo
 //Misc
+subtitle.block.well.crank=Manivela de pozo rechina
 warn.well.onePerChunk=§l§4Ya existe un pozo apuntando hacia arriba 16 bloques alrededor de este!
 warn.well.onePerChunkFlipped=§l§4Ya existe un pozo apuntando hacia abajo 16 bloques alrededor de este!

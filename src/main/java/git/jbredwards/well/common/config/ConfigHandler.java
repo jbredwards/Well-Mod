@@ -36,7 +36,7 @@ public final class ConfigHandler
     @Config.LangKey("config.well.tankCapacity")
     public static int tankCapacity = 100000;
     public static float getRenderedFluidHeight(@Nonnull FluidStack fluid, boolean isUpsideDown) {
-        final float normalHeight = fluid.amount * 14.5f / (16 * tankCapacity) + 1.5f / 16;
+        final float normalHeight = fluid.amount * 14f / (16 * tankCapacity) + 2f / 16;
         return isUpsideDown ? 1 - normalHeight : normalHeight;
     }
 

@@ -2,12 +2,13 @@
     "type":"minecraft:crafting_shaped",
     "pattern":[
         "RRR",
-        "/B/",
-        "SSS"
+        "/L/",
+        "SBS"
     ],
     "key":{
         "R":{"item":"minecraft:brick"},
         "/":{"item":"minecraft:stick"},
+        "L":{"item":"minecraft:lead"},
         "B":{"item":"minecraft:bucket"},
         "S":{"item":"minecraft:stonebrick","data":0}
     },

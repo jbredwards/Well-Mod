@@ -1,6 +1,7 @@
 package git.jbredwards.well.common.tileentity;
 
 import git.jbredwards.well.common.config.ConfigHandler;
+import git.jbredwards.well.common.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -40,8 +41,10 @@ public class TileEntityWell extends TileEntity implements ITickable
         if(!initialized) onLoad();
         if(initialized && hasWorld() && !world.isRemote && fillTick <= world.getTotalWorldTime() && ConfigHandler.canGenerateFluid(nearbyWells)) {
             final FluidStack fluidToFill = getFluidToFill();
-            if(fluidToFill != null && tank.fill(fluidToFill, true) > 0 && ConfigHandler.playSound)
-                world.playSound(null, pos, fluidToFill.getFluid().getFillSound(fluidToFill), SoundCategory.BLOCKS, 0.25f, 1);
+            if(fluidToFill != null && tank.fill(fluidToFill, true) > 0 && ConfigHandler.playSound) {
+                world.playSound(null, pos.up(), ModSounds.CRANK, SoundCategory.BLOCKS, 0.25f, 1);
+                world.playSound(null, pos, fluidToFill.getFluid().getFillSound(fluidToFill), SoundCategory.BLOCKS, 0.30f, 1);
+            }
 
             initFillTick();
         }

@@ -26,5 +26,6 @@ tile.well.well.name=Well
 tile.well.white_well.name=White Well
 tile.well.yellow_well.name=Yellow Well
 //Misc
+subtitle.block.well.crank=Well crank squeaks
 warn.well.onePerChunk=§l§4Already one other right side up well within 16 blocks of this one!
 warn.well.onePerChunkFlipped=§l§4Already one other upside down well within 16 blocks of this one!

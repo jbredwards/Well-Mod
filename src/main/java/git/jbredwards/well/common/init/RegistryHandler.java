@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -41,6 +42,11 @@ public final class RegistryHandler
     static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         ModItems.INIT.forEach(event.getRegistry()::register);
         ModItems.INIT.forEach(item -> OreDictionary.registerOre("blockWell", item));
+    }
+
+    @SubscribeEvent
+    static void registerSounds(@Nonnull RegistryEvent.Register<SoundEvent> event) {
+        event.getRegistry().register(ModSounds.CRANK);
     }
 
     @SideOnly(Side.CLIENT)
