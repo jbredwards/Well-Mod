@@ -1,0 +1,11 @@
+{
+    "type":"minecraft:crafting_shapeless",
+    "ingredients":[
+        {"ore":"dyePurple","type":"forge:ore_dict"},
+        {"item":"well:well"}
+    ],
+    "result":{
+        "item":"well:purple_well",
+        "count":1
+    }
+}

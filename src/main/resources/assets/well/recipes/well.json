@@ -1,14 +1,14 @@
 {
     "type":"minecraft:crafting_shaped",
     "pattern":[
-        " R ",
+        "RRR",
         "/B/",
-        " S "
+        "SSS"
     ],
     "key":{
-        "R":{"item":"minecraft:hardened_clay"},
+        "R":{"item":"minecraft:brick"},
         "/":{"item":"minecraft:stick"},
-        "B":{"item":"minecraft:water_bucket"},
+        "B":{"item":"minecraft:bucket"},
         "S":{"item":"minecraft:stonebrick","data":0}
     },
     "result":{

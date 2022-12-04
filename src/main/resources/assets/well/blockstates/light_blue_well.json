@@ -3,61 +3,61 @@
     "defaults":{
         "model":"forge:multi-layer",
         "transform":"forge:default-block",
-        "textures":{"roof":"well:blocks/brick_roof"}
+        "textures":{"roof":"well:blocks/light_blue_roof"}
     },
     "variants":{
         "normal":[{}],
         "inventory":[{"model":"well:well"}],
         "axis=x,is_bottom=false,upside_down=false":[{
             "custom":{
-                "base":"well:well#roof_x",
-                "Solid":"well:well#roof_x"
+                "base":"well:light_blue_well#roof_x",
+                "Solid":"well:light_blue_well#roof_x"
             }
         }],
         "axis=z,is_bottom=false,upside_down=false":[{
             "custom":{
-                "base":"well:well#roof_z",
-                "Solid":"well:well#roof_z"
+                "base":"well:light_blue_well#roof_z",
+                "Solid":"well:light_blue_well#roof_z"
             }
         }],
         "axis=x,is_bottom=true,upside_down=false":[{
             "custom":{
-                "base":"well:well#base_x",
-                "Solid":"well:well#base_x",
-                "Translucent":"well:well#fluid"
+                "base":"well:light_blue_well#base_x",
+                "Solid":"well:light_blue_well#base_x",
+                "Translucent":"well:light_blue_well#fluid"
             }
         }],
         "axis=z,is_bottom=true,upside_down=false":[{
             "custom":{
-                "base":"well:well#base_z",
-                "Solid":"well:well#base_z",
-                "Translucent":"well:well#fluid"
+                "base":"well:light_blue_well#base_z",
+                "Solid":"well:light_blue_well#base_z",
+                "Translucent":"well:light_blue_well#fluid"
             }
         }],
         "axis=x,is_bottom=false,upside_down=true":[{
             "custom":{
-                "base":"well:well#roof_x_flipped",
-                "Solid":"well:well#roof_x_flipped"
+                "base":"well:light_blue_well#roof_x_flipped",
+                "Solid":"well:light_blue_well#roof_x_flipped"
             }
         }],
         "axis=z,is_bottom=false,upside_down=true":[{
             "custom":{
-                "base":"well:well#roof_z_flipped",
-                "Solid":"well:well#roof_z_flipped"
+                "base":"well:light_blue_well#roof_z_flipped",
+                "Solid":"well:light_blue_well#roof_z_flipped"
             }
         }],
         "axis=x,is_bottom=true,upside_down=true":[{
             "custom":{
-                "base":"well:well#base_x_flipped",
-                "Solid":"well:well#base_x_flipped",
-                "Translucent":"well:well#fluid"
+                "base":"well:light_blue_well#base_x_flipped",
+                "Solid":"well:light_blue_well#base_x_flipped",
+                "Translucent":"well:light_blue_well#fluid"
             }
         }],
         "axis=z,is_bottom=true,upside_down=true":[{
             "custom":{
-                "base":"well:well#base_z_flipped",
-                "Solid":"well:well#base_z_flipped",
-                "Translucent":"well:well#fluid"
+                "base":"well:light_blue_well#base_z_flipped",
+                "Solid":"well:light_blue_well#base_z_flipped",
+                "Translucent":"well:light_blue_well#fluid"
             }
         }],
         "base_x":{"model":"well:well_base"},

@@ -15,6 +15,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,6 +63,7 @@ public class BlockWell extends Block implements ITileEntityProvider
     public BlockWell(@Nonnull Material materialIn) { this(materialIn, materialIn.getMaterialMapColor()); }
     public BlockWell(@Nonnull Material materialIn, @Nonnull MapColor mapColorIn) {
         super(materialIn, mapColorIn);
+        setCreativeTab(CreativeTabs.DECORATIONS).setHardness(3f).setResistance(1.5f).setHarvestLevel("pickaxe", 0);
         setDefaultState(getDefaultState().withProperty(IS_BOTTOM, true));
         useNeighborBrightness = true;
     }
