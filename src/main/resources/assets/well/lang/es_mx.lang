@@ -8,7 +8,23 @@ config.well.playSound.tooltip=Reproduce un sonido de cubo llenándose cuando los
 config.well.tankCapacity=Capacidad de tanque de fluido
 config.well.tankCapacity.tooltip=Cuántos milicubos (mb) almacena un pozo. Dejar en 0 para desactivar.
 //Block
+tile.well.black_well.name=Pozo negro
+tile.well.blue_well.name=Pozo azul
+tile.well.brown_well.name=Pozo café
+tile.well.cyan_well.name=Pozo cian
+tile.well.gray_well.name=Pozo gris
+tile.well.green_well.name=Pozo verde
+tile.well.light_blue_well.name=Pozo celeste
+tile.well.lime_well.name=Pozo lima
+tile.well.magenta_well.name=Pozo magenta
+tile.well.orange_well.name=Pozo naranja
+tile.well.pink_well.name=Pozo roza
+tile.well.purple_well.name=Pozo morado
+tile.well.red_well.name=Pozo rojo
+tile.well.silver_well.name=Pozo gris claro
 tile.well.well.name=Pozo
+tile.well.white_well.name=Pozo blanco
+tile.well.yellow_well.name=Pozo amarillo
 //Misc
 warn.well.onePerChunk=§l§4Ya existe un pozo apuntando hacia arriba 16 bloques alrededor de este!
 warn.well.onePerChunkFlipped=§l§4Ya existe un pozo apuntando hacia abajo 16 bloques alrededor de este!
