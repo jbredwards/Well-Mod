@@ -1,7 +1,6 @@
 package git.jbredwards.well.common.tileentity;
 
 import git.jbredwards.well.common.config.ConfigHandler;
-import git.jbredwards.well.common.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -9,7 +8,6 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.Capability;
@@ -33,19 +31,17 @@ public class TileEntityWell extends TileEntity implements ITickable
     public final FluidTankSynced tank = new FluidTankSynced(this, ConfigHandler.tankCapacity);
     public long fillTick = 0;
     public int nearbyWells = 1;
+    public int delayUntilNextBucket = 0;
     public boolean initialized;
     protected Biome biome;
 
     @Override
     public void update() {
         if(!initialized) onLoad();
+        if(delayUntilNextBucket > 0) delayUntilNextBucket--;
         if(initialized && hasWorld() && !world.isRemote && fillTick <= world.getTotalWorldTime() && ConfigHandler.canGenerateFluid(nearbyWells)) {
             final FluidStack fluidToFill = getFluidToFill();
-            if(fluidToFill != null && tank.fill(fluidToFill, true) > 0 && ConfigHandler.playSound) {
-                world.playSound(null, pos.up(), ModSounds.CRANK, SoundCategory.BLOCKS, 0.25f, 1);
-                world.playSound(null, pos, fluidToFill.getFluid().getFillSound(fluidToFill), SoundCategory.BLOCKS, 0.30f, 1);
-            }
-
+            if(fluidToFill != null) tank.fill(fluidToFill, true);
             initFillTick();
         }
     }
@@ -191,6 +187,7 @@ public class TileEntityWell extends TileEntity implements ITickable
         @Nullable
         @Override
         public FluidStack drainInternal(int maxDrain, boolean doDrain) {
+            if(((TileEntityWell)tile).delayUntilNextBucket > 0) return null;
             final @Nullable FluidStack resource = super.drainInternal(maxDrain, doDrain);
             if(resource != null && doDrain) {
                 final IBlockState state = tile.getBlockType().getDefaultState();

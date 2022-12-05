@@ -1,6 +1,7 @@
 package git.jbredwards.well.common.block;
 
 import git.jbredwards.well.common.config.ConfigHandler;
+import git.jbredwards.well.common.init.ModSounds;
 import git.jbredwards.well.common.tileentity.TileEntityWell;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -159,8 +160,20 @@ public class BlockWell extends Block implements ITileEntityProvider
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         final @Nullable TileEntity tile = worldIn.getTileEntity(pos);
         if(tile instanceof TileEntityWell && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
+            final TileEntityWell well = (TileEntityWell)tile;
+            final int prevAmount = well.tank.getFluidAmount();
+
             final @Nullable IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing);
-            return handler != null && FluidUtil.interactWithFluidHandler(playerIn, hand, handler);
+            final boolean changed = handler != null && FluidUtil.interactWithFluidHandler(playerIn, hand, handler);
+
+            if(changed) {
+                if(ConfigHandler.playSound && prevAmount > well.tank.getFluidAmount()) {
+                    worldIn.playSound(null, pos.up(), ModSounds.CRANK, SoundCategory.BLOCKS, 0.25f, 1);
+                    ((TileEntityWell)tile).delayUntilNextBucket = 32;
+                }
+
+                return true;
+            }
         }
 
         return false;

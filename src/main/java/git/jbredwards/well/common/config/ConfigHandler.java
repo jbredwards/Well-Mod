@@ -111,8 +111,15 @@ public final class ConfigHandler
                     final NBTTagCompound data = dataList.getCompoundTagAt(i);
                     if(data.hasKey("Fluid", NBT.TAG_COMPOUND)) {
                         final FluidStack fluid = FluidStack.loadFluidStackFromNBT(data.getCompoundTag("Fluid"));
-                        final int minToFill = (fluid != null && data.hasKey("MinTicks", NBT.TAG_INT) ? Math.max(0, data.getInteger("MinTicks")) : 0);
-                        final int maxToFill = (fluid != null && data.hasKey("MaxTicks", NBT.TAG_INT) ? Math.max(0, data.getInteger("MaxTicks")) : 0);
+                        final boolean isUpsideDown = fluid != null && fluid.getFluid().isLighterThanAir();
+                        //fill delays
+                        final int minToFill = (fluid != null && data.hasKey("MinTicks", NBT.TAG_INT)
+                                ? Math.abs(data.getInteger("MinTicks"))
+                                : (isUpsideDown ? WellFluidData.UP_DEFAULT : WellFluidData.DOWN_DEFAULT).minToFill);
+                        final int maxToFill = (fluid != null && data.hasKey("MaxTicks", NBT.TAG_INT)
+                                ? Math.abs(data.getInteger("MaxTicks"))
+                                : (isUpsideDown ? WellFluidData.UP_DEFAULT : WellFluidData.DOWN_DEFAULT).maxToFill);
+                        //well data
                         final WellFluidData wellData = new WellFluidData(fluid, minToFill, maxToFill);
                         //handle biome tags
                         data.getTagList("BiomeTags", NBT.TAG_STRING).forEach(biomeTagNbt -> {
@@ -125,7 +132,7 @@ public final class ConfigHandler
                                 }
                                 //add new data
                                 else {
-                                    if(wellData.fluid.getFluid().isLighterThanAir()) upWellData.put(biome, wellData);
+                                    if(isUpsideDown) upWellData.put(biome, wellData);
                                     else downWellData.put(biome, wellData);
                                 }
                             }
@@ -141,7 +148,7 @@ public final class ConfigHandler
                                 }
                                 //add new data
                                 else {
-                                    if(wellData.fluid.getFluid().isLighterThanAir()) upWellData.put(biome, wellData);
+                                    if(isUpsideDown) upWellData.put(biome, wellData);
                                     else downWellData.put(biome, wellData);
                                 }
                             }

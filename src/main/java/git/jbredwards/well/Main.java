@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * @author jbred
  *
  */
-@Mod(modid = "well", name = "Well Mod", version = "1.0.0")
+@Mod(modid = "well", name = "Well Mod", version = "1.0.1")
 public final class Main
 {
     @Mod.EventHandler
